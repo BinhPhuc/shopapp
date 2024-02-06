@@ -4,22 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "product_images")
+@Table(name = "roles")
 @Data
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class ProductImage {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @OneToMany(mappedBy = "users")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(length = 100, nullable = false)
+    private String name;
 }
