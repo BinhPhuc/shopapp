@@ -4,7 +4,6 @@ import com.project.shopapp.dtos.ProductDTO;
 import jakarta.validation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,12 +65,12 @@ public class ProductController {
         Files.copy(file.getInputStream(), destinationPath);
         return uniqueFileName;
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<String> getProductById(@PathVariable("id") String id) {
-        return ResponseEntity.ok("Product with ID: " + id);
+    @GetMapping("/{user_id}")
+    public ResponseEntity<String> getProductById(@PathVariable("user_id") String userId) {
+        return ResponseEntity.ok("Product with ID: " + userId);
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProductById(@PathVariable("id") long id) {
-        return ResponseEntity.ok(String.format("Product with id = %d delete successfully!", id));
+    @DeleteMapping("/{user_id}")
+    public ResponseEntity<String> deleteProductById(@PathVariable("user_id") long userId) {
+        return ResponseEntity.ok(String.format("Product with id = %d delete successfully!", userId));
     }
 }
