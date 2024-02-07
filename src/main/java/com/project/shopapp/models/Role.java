@@ -14,7 +14,6 @@ import lombok.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @OneToMany(mappedBy = "users")
     private Long id;
 
     @Column(length = 100, nullable = false)
