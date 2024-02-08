@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.ProductDTO;
+import com.project.shopapp.exception.NotFoundException;
 import jakarta.validation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
