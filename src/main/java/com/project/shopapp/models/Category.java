@@ -11,6 +11,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 
 public class Category {
     @Id
@@ -19,5 +20,4 @@ public class Category {
 
     private String name;
 
-    private Product product;
 }
