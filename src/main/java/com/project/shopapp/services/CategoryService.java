@@ -5,33 +5,29 @@ import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Not;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 
 public class CategoryService implements ICategoryService {
-    @Autowired
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
     @Override
     public Category createCategory(CategoryDTO categoryDTO) {
-        Category newCategory = Category.builder().name(categoryDTO.getName()).build();
-        return categoryRepository.save(newCategory);
+//        Category newCategory = Category.builder().name(categoryDTO.getName()).build();
+        Category category = modelMapper.map(categoryDTO, Category.class);
+        return categoryRepository.save(category);
     }
 
     @Override
     public Category getCategoryById(Long id) throws NotFoundException {
         return categoryRepository.findById(id).orElseThrow(() -> {
-            try {
-                throw new NotFoundException("Category with id = " + id + " not found!");
-            } catch (NotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            return new NotFoundException("Category with id = " + id + " not found!");
         });
     }
 
