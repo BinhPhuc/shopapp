@@ -52,18 +52,7 @@ public class ProductService implements IProductService {
         // lay danh sach san pham theo trang(page) va gioi han(limit)
         // trang 1: 1 -> 10
         // trang 2: 11 -> 20
-        return productRepository.findAll(pageRequest).map(product -> {
-            ProductResponse productResponse = ProductResponse.builder()
-                    .name(product.getName())
-                    .description(product.getDescription())
-                    .price(product.getPrice())
-                    .thumbnail(product.getThumbnail())
-                    .categoryId(product.getCategory().getId())
-                    .build();
-            productResponse.setCreatedAt(product.getCreatedAt());
-            productResponse.setUpdatedAt(product.getUpdatedAt());
-            return productResponse;
-        });
+        return productRepository.findAll(pageRequest).map(ProductResponse::fromProduct);
     }
 
     @Override

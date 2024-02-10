@@ -1,5 +1,6 @@
 package com.project.shopapp.controllers;
 
+import com.github.javafaker.Faker;
 import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.exception.InvalidParamException;
@@ -8,7 +9,6 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductListResponse;
 import com.project.shopapp.responses.ProductResponse;
 import com.project.shopapp.services.IProductService;
-import com.project.shopapp.services.ProductService;
 import com.project.shopapp.models.Product;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
@@ -113,11 +113,42 @@ public class ProductController {
     }
 
     @GetMapping("/{product_id}")
-    public ResponseEntity<String> getProductById(@PathVariable("product_id") Long productId) {
-        return ResponseEntity.ok("Product with ID: " + productId);
+    public ResponseEntity<?> getProductById(@PathVariable("product_id") Long productId) throws NotFoundException {
+        Product existingProduct = productService.getProductById(productId);
+        return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
     }
     @DeleteMapping("/{product_id}")
     public ResponseEntity<String> deleteProductById(@PathVariable("product_id") Long productId) {
+        productService.deleteProduct(productId);
         return ResponseEntity.ok(String.format("Product with id = %d delete successfully!", productId));
+    }
+
+    @PutMapping("/{product_id}")
+    public ResponseEntity<?> updateProductById(@PathVariable("product_id") Long productId,
+                                                   @Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
+        productService.updateProduct(productId, productDTO);
+        Product productAfterUpdated = productService.getProductById(productId);
+        return ResponseEntity.ok(ProductResponse.fromProduct(productAfterUpdated));
+    }
+
+
+    // fake products
+//    @PostMapping("/generateFakeProducts")
+    private ResponseEntity<String> generateFakeProducts () throws NotFoundException {
+        Faker faker = new Faker();
+        for(int i = 1; i <= 1000; i++) {
+            String productName = faker.commerce().productName();
+            if(productService.existsByName(productName)) continue;
+            ProductDTO productDTO = ProductDTO
+                    .builder()
+                    .name(productName)
+                    .price((float)faker.number().randomDouble(4, 10, 10000))
+                    .thumbnail("")
+                    .description(faker.lorem().sentence())
+                    .categoryId((long)faker.number().numberBetween(8, 12))
+                    .build();
+            productService.createProduct(productDTO);
+        }
+        return ResponseEntity.ok("Fake products created successfully!");
     }
 }
