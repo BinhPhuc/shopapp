@@ -1,5 +1,6 @@
 package com.project.shopapp.advice;
 
+import com.project.shopapp.exception.DateAndTimeException;
 import com.project.shopapp.exception.InvalidParamException;
 import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.exception.PasswordMachingException;
@@ -73,6 +74,14 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(InvalidParamException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleNotFoundException (InvalidParamException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage());
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DateAndTimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handleNotFoundException (DateAndTimeException ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
