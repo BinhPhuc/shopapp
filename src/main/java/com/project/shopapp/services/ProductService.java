@@ -12,6 +12,7 @@ import com.project.shopapp.repositories.ProductImageRepository;
 import com.project.shopapp.repositories.ProductRepository;
 import com.project.shopapp.responses.ProductResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,20 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
+    private final ModelMapper modelMapper;
     @Override
     public Product createProduct(ProductDTO productDTO) throws NotFoundException {
-        Category existingCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(() -> {
-            return new NotFoundException("Category not found!");
-        });
-        Product newProduct = Product.builder()
-                .name(productDTO.getName())
-                .price(productDTO.getPrice())
-                .thumbnail(productDTO.getThumbnail())
-                .category(existingCategory)
-                .description(productDTO.getDescription())
-                .build();
+        Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new NotFoundException("Category not found!"));
+//        Product newProduct = Product.builder()
+//                .name(productDTO.getName())
+//                .price(productDTO.getPrice())
+//                .thumbnail(productDTO.getThumbnail())
+//                .category(existingCategory)
+//                .description(productDTO.getDescription())
+//                .build();
+        Product newProduct = modelMapper.map(productDTO, Product.class);
+        newProduct.setCategory(existingCategory);
         return productRepository.save(newProduct);
     }
 

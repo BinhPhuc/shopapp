@@ -2,9 +2,9 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
+import com.project.shopapp.services.IUserService;
 import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.exception.PasswordMachingException;
-import com.project.shopapp.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 
 public class UserController {
-    private final UserService userService;
+    private final IUserService userService;
     @PostMapping("/register")
     public ResponseEntity<?> createUser (@Valid @RequestBody UserDTO userDTO) throws PasswordMachingException, NotFoundException {
         if(!userDTO.getPassword().equals(userDTO.getRetypePassword())) {

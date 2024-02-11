@@ -25,20 +25,18 @@ public class UserService implements IUserService {
         if(userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number alreadt exists!");
         };
-        User newUser = User
-                .builder()
-                .fullName(userDTO.getFullName())
-                .phoneNumber(userDTO.getPhoneNumber())
-                .address(userDTO.getAddress())
-                .password(userDTO.getPassword())
-                .dateOfBirth(userDTO.getDateOfBirth())
-                .facebookAccountId(userDTO.getFacebookAccountId())
-                .googleAccountId(userDTO.getGoogleAccountId())
-                .build();
-        Role role = roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> {
-            return new NotFoundException("Role not found");
-        });
-//        User newUser = modelMapper.map(userDTO, User.class);
+//        User newUser = User
+//                .builder()
+//                .fullName(userDTO.getFullName())
+//                .phoneNumber(userDTO.getPhoneNumber())
+//                .address(userDTO.getAddress())
+//                .password(userDTO.getPassword())
+//                .dateOfBirth(userDTO.getDateOfBirth())
+//                .facebookAccountId(userDTO.getFacebookAccountId())
+//                .googleAccountId(userDTO.getGoogleAccountId())
+//                .build();
+        Role role = roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new NotFoundException("Role not found"));
+        User newUser = modelMapper.map(userDTO, User.class);
         newUser.setRole(role);
         if(userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
             String password = userDTO.getPassword();

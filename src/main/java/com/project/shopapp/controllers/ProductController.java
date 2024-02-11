@@ -54,7 +54,7 @@ public class ProductController {
     @PostMapping(value = "")
     public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
         Product newProduct = productService.createProduct(productDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(newProduct);
+        return ResponseEntity.ok(ProductResponse.fromProduct(newProduct));
     }
     @PostMapping(value = "/uploads/{id}")
     public ResponseEntity<?> uploadImages (@Valid @ModelAttribute List<MultipartFile> files,
@@ -133,7 +133,7 @@ public class ProductController {
 
 
     // fake products
-//    @PostMapping("/generateFakeProducts")
+    @PostMapping("/generateFakeProducts")
     private ResponseEntity<String> generateFakeProducts () throws NotFoundException {
         Faker faker = new Faker();
         for(int i = 1; i <= 1000; i++) {

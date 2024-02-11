@@ -3,6 +3,7 @@ package com.project.shopapp.responses;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.models.Product;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
