@@ -31,23 +31,21 @@ public class ProductService implements IProductService {
     public Product createProduct(ProductDTO productDTO) throws NotFoundException {
         Category existingCategory = categoryRepository.findById(productDTO.getCategoryId())
                 .orElseThrow(() -> new NotFoundException("Category not found!"));
-//        Product newProduct = Product.builder()
-//                .name(productDTO.getName())
-//                .price(productDTO.getPrice())
-//                .thumbnail(productDTO.getThumbnail())
-//                .category(existingCategory)
-//                .description(productDTO.getDescription())
-//                .build();
-        Product newProduct = modelMapper.map(productDTO, Product.class);
+        Product newProduct = Product.builder()
+                .name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .thumbnail(productDTO.getThumbnail())
+                .category(existingCategory)
+                .description(productDTO.getDescription())
+                .build();
         newProduct.setCategory(existingCategory);
         return productRepository.save(newProduct);
     }
 
     @Override
     public Product getProductById(Long productId) throws NotFoundException {
-        return productRepository.findById(productId).orElseThrow(() -> {
-            return new NotFoundException("Cannot find product with id = " + productId);
-        });
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Cannot find product with id = " + productId));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.models.User;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.services.IUserService;
 import com.project.shopapp.exception.NotFoundException;
@@ -10,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -36,5 +34,12 @@ public class UserController {
         // kiem tra thong tin dang nhap va sinh token
         String token = userService.logIn(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
         return ResponseEntity.status(HttpStatus.OK).body(token);
+    }
+
+    @GetMapping("/{user_id}")
+    public ResponseEntity<?> getUser (@PathVariable("user_id") Long userId)
+            throws NotFoundException {
+        User user = userService.getUserById(userId);
+        return ResponseEntity.ok(user);
     }
 }

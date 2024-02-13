@@ -10,4 +10,6 @@ public interface IUserService {
     User createUser(UserDTO userDTO) throws NotFoundException;
 
     String logIn(String phoneNumber, String password);
+
+    User getUserById(Long userId) throws NotFoundException;
 }

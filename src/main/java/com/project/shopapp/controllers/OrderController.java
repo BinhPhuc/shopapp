@@ -1,17 +1,20 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.OrderDTO;
-import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.exception.DateAndTimeException;
+import com.project.shopapp.exception.NotFoundException;
+import com.project.shopapp.models.Order;
+import com.project.shopapp.responses.OrderListResponse;
+import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.IOrderService;
-import com.project.shopapp.services.OrderService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/orders")
@@ -21,23 +24,36 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final IOrderService orderService;
     @PostMapping("")
-    public ResponseEntity<?> createOrder (@Valid @RequestBody OrderDTO orderDTO) {
-//        orderService.createOrder(orderDTO);
-        return ResponseEntity.status(HttpStatus.OK).body("create order sucessfully!");
+    public ResponseEntity<?> createOrder (@Valid @RequestBody OrderDTO orderDTO)
+            throws NotFoundException, DateAndTimeException {
+        Order order = orderService.createOrder(orderDTO);
+        return ResponseEntity.ok(OrderResponse.fromOrder(order));
     }
-    @GetMapping("/{user_id}")
-    public ResponseEntity<?> getOrder (@Valid @PathVariable("user_id") Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(String.format("Get user's %d order list!", userId));
-    }
-    @PutMapping("/{user_id}")
-    public ResponseEntity<?> updateOrder (@Valid @PathVariable("user_id") Long userID,
-                                          @Valid @RequestBody OrderDTO orderDTO ) {
-        return ResponseEntity.status(HttpStatus.OK).body("Update order succesfully!");
+    @GetMapping("/{order_id}")
+    public ResponseEntity<?> getOrder (@Valid @PathVariable("order_id") Long orderId)
+            throws NotFoundException {
+        Order order = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(order);
     }
 
-    @DeleteMapping("/{user_id}")
-    public ResponseEntity<?> deleteOrder (@Valid @PathVariable("user_id") Long userID) {
+    @GetMapping("/user/{user_id}")
+    public ResponseEntity<?> getOrders (@Valid @PathVariable("user_id") Long userId)
+            throws NotFoundException {
+        List<Order> orderList = orderService.getAllOrdersById(userId);
+        return ResponseEntity.ok(orderList);
+    }
+    @PutMapping("/{order_id}")
+    public ResponseEntity<?> updateOrder (@Valid @PathVariable("order_id") Long orderId,
+                                          @Valid @RequestBody OrderDTO orderDTO ) throws NotFoundException {
+        Order newOrder = orderService.updateOrder(orderId, orderDTO);
+        return ResponseEntity.ok(newOrder);
+    }
+
+    @DeleteMapping("/{order_id}")
+    public ResponseEntity<?> deleteOrder (@Valid @PathVariable("order_id") Long orderId)
+            throws NotFoundException {
         // active -> 0
-        return ResponseEntity.status(HttpStatus.OK).body("Delete order succesfully!");
+        orderService.deleteOrderById(orderId);
+        return ResponseEntity.ok("Delete order with id = " + orderId + " successfully!");
     }
 }

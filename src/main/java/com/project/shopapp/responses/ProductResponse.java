@@ -19,7 +19,7 @@ public class ProductResponse extends BaseResponse {
     @JsonProperty("category_id")
     private Long categoryId;
 
-    public static final ProductResponse fromProduct (Product product) {
+    public static ProductResponse fromProduct (Product product) {
         ProductResponse productResponse = ProductResponse.builder()
                 .name(product.getName())
                 .description(product.getDescription())

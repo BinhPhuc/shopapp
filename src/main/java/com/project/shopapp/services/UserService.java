@@ -7,6 +7,7 @@ import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,17 @@ public class UserService implements IUserService {
         if(userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number alreadt exists!");
         };
-//        User newUser = User
-//                .builder()
-//                .fullName(userDTO.getFullName())
-//                .phoneNumber(userDTO.getPhoneNumber())
-//                .address(userDTO.getAddress())
-//                .password(userDTO.getPassword())
-//                .dateOfBirth(userDTO.getDateOfBirth())
-//                .facebookAccountId(userDTO.getFacebookAccountId())
-//                .googleAccountId(userDTO.getGoogleAccountId())
-//                .build();
         Role role = roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new NotFoundException("Role not found"));
-        User newUser = modelMapper.map(userDTO, User.class);
+        User newUser = User
+                .builder()
+                .fullName(userDTO.getFullName())
+                .phoneNumber(userDTO.getPhoneNumber())
+                .address(userDTO.getAddress())
+                .password(userDTO.getPassword())
+                .dateOfBirth(userDTO.getDateOfBirth())
+                .facebookAccountId(userDTO.getFacebookAccountId())
+                .googleAccountId(userDTO.getGoogleAccountId())
+                .build();
         newUser.setRole(role);
         if(userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
             String password = userDTO.getPassword();
@@ -48,5 +48,10 @@ public class UserService implements IUserService {
     @Override
     public String logIn(String phoneNumber, String password) {
         return null;
+    }
+
+    public User getUserById(Long userId) throws NotFoundException {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Cannot find user with id = " + userId));
     }
 }

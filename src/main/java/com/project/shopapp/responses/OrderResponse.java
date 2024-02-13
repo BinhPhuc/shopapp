@@ -1,14 +1,11 @@
 package com.project.shopapp.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import com.project.shopapp.models.Order;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -27,7 +24,7 @@ public class OrderResponse extends BaseResponse {
     private String address;
     private String note;
     @JsonProperty("order_date")
-    private LocalDateTime orderDate;
+    private Date orderDate;
     @JsonProperty("total_money")
     private Float totalMoney;
     @JsonProperty("shipping_method")
@@ -36,5 +33,25 @@ public class OrderResponse extends BaseResponse {
     private String shippingAddress;
     @JsonProperty("payment_method")
     private String paymentMethod;
+
+    public static final OrderResponse fromOrder (Order order) {
+         OrderResponse orderResponse = OrderResponse
+                .builder()
+                .userId(order.getUser().getId())
+                .fullName(order.getFullName())
+                .email(order.getEmail())
+                .phoneNumber(order.getPhoneNumber())
+                .address(order.getAddress())
+                .note(order.getNote())
+                .orderDate(order.getOrderDate())
+                .totalMoney(order.getTotalMoney())
+                .shippingMethod(order.getShippingMethod())
+                .shippingAddress(order.getShippingAddress())
+                .paymentMethod(order.getPaymentMethod())
+                .build();
+         orderResponse.setCreatedAt(LocalDateTime.now());
+         orderResponse.setUpdatedAt(LocalDateTime.now());
+         return orderResponse;
+    }
 
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Getter
@@ -44,6 +44,9 @@ public class OrderDTO {
 
     @JsonProperty("shipping_address")
     private String shippingAddress;
+
+    @JsonProperty("shipping_date")
+    private LocalDate shippingDate;
 
     @JsonProperty("payment_method")
     @NotEmpty(message = "Payment method is required!")
