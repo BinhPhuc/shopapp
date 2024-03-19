@@ -5,8 +5,6 @@ import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.models.Category;
 import com.project.shopapp.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,11 +14,9 @@ import java.util.List;
 
 public class CategoryService implements ICategoryService {
     private final CategoryRepository categoryRepository;
-    private final ModelMapper modelMapper;
     @Override
     public Category createCategory(CategoryDTO categoryDTO) {
-//        Category newCategory = Category.builder().name(categoryDTO.getName()).build();
-        Category category = modelMapper.map(categoryDTO, Category.class);
+        Category category = Category.builder().name(categoryDTO.getName()).build();
         return categoryRepository.save(category);
     }
 

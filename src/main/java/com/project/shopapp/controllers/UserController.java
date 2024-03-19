@@ -1,6 +1,7 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.UserDTO;
+import com.project.shopapp.exception.InvalidParamException;
 import com.project.shopapp.models.User;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.services.IUserService;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +32,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login (@Valid @RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<?> login (@Valid @RequestBody UserLoginDTO userLoginDTO)
+            throws NotFoundException, UsernameNotFoundException, InvalidParamException {
         // kiem tra thong tin dang nhap va sinh token
-        String token = userService.logIn(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
+        String token = userService.logIn(userLoginDTO);
         return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 

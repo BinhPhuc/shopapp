@@ -18,5 +18,12 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  security:
+    user:
+      name: binhphuc
+      password: binh2006
 api:
   prefix: api/v1
+jwt:
+  expiration: 2592000
+  secret: P9nQesIs4Zw+fzcoO2NMKZh1B9pRFFiHCQOIybcs4Bk=
