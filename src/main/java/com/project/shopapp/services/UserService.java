@@ -5,6 +5,7 @@ import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.exception.InvalidParamException;
 import com.project.shopapp.exception.NotFoundException;
+import com.project.shopapp.exception.PermissionDenied;
 import com.project.shopapp.models.Role;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.RoleRepository;
@@ -33,13 +34,17 @@ public class UserService implements IUserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
     @Override
-    public User createUser(UserDTO userDTO) throws NotFoundException {
+    public User createUser(UserDTO userDTO) throws NotFoundException, PermissionDenied {
         // Register user
         String phoneNumber = userDTO.getPhoneNumber();
         if(userRepository.existsByPhoneNumber(phoneNumber)) {
             throw new DataIntegrityViolationException("Phone number alreadt exists!");
         };
-        Role role = roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new NotFoundException("Role not found"));
+        Role role = roleRepository.findById(userDTO.getRoleId())
+                .orElseThrow(() -> new NotFoundException("Role not found"));
+        if(role.getName().toUpperCase().equals(Role.ADMIN)) {
+            throw new PermissionDenied("You cannot register an admin account!");
+        }
         User newUser = User
                 .builder()
                 .fullName(userDTO.getFullName())

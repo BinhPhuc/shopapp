@@ -2,6 +2,7 @@ package com.project.shopapp.controllers;
 
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.exception.InvalidParamException;
+import com.project.shopapp.exception.PermissionDenied;
 import com.project.shopapp.models.User;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.services.IUserService;
@@ -23,7 +24,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final IUserService userService;
     @PostMapping("/register")
-    public ResponseEntity<?> createUser (@Valid @RequestBody UserDTO userDTO) throws PasswordMachingException, NotFoundException {
+    public ResponseEntity<?> createUser (@Valid @RequestBody UserDTO userDTO) throws
+            PasswordMachingException,
+            NotFoundException,
+            PermissionDenied
+            {
         if(!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
             throw new PasswordMachingException("Password and retype password are not matching!");
         }
