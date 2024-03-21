@@ -1,9 +1,6 @@
 package com.project.shopapp.advice;
 
-import com.project.shopapp.exception.DateAndTimeException;
-import com.project.shopapp.exception.InvalidParamException;
-import com.project.shopapp.exception.NotFoundException;
-import com.project.shopapp.exception.PasswordMachingException;
+import com.project.shopapp.exception.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
@@ -82,6 +79,13 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(DateAndTimeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleNotFoundException (DateAndTimeException ex) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("errorMessage", ex.getMessage());
+        return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(PermissionDenied.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handlePermissionDenied (PermissionDenied ex) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("errorMessage", ex.getMessage());
         return new ResponseEntity<>(errorMap, HttpStatus.BAD_REQUEST);
