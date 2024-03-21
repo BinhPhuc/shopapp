@@ -10,6 +10,7 @@ import io.jsonwebtoken.security.InvalidKeyException;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.KeyGenerator;
@@ -70,18 +71,18 @@ public class JwtTokenUtil {
     }
 
 
-    public Key getSignInKey () {
+    private Key getSignInKey () {
         byte[] bytes = Decoders.BASE64.decode(secretKey);
         //P9nQesIs4Zw+fzcoO2NMKZh1B9pRFFiHCQOIybcs4Bk=
         //Decoders.BASE64.decode(P9nQesIs4Zw+fzcoO2NMKZh1B9pRFFiHCQOIybcs4Bk=);
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    public Claims extractAllClaims (String token) {
+    private Claims extractAllClaims (String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 
@@ -90,10 +91,17 @@ public class JwtTokenUtil {
         return claimsResolver.apply(claims);
     }
 
-    private boolean isTokenExpired (String token) {
+    public boolean isTokenExpired (String token) {
         Date expirationDate = extractClaim(token, Claims::getExpiration);
         return expirationDate.before(new Date());
     }
 
+    public String extractPhoneNumber(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+    public boolean isTokenValidated(String token, UserDetails userDetails) {
+        String phoneNumber = extractPhoneNumber(token);
+        return !isTokenExpired(token) && phoneNumber.equals(userDetails.getUsername());
+    }
 
 }
