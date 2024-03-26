@@ -3,6 +3,7 @@ package com.project.shopapp.services;
 import com.project.shopapp.components.JwtTokenUtil;
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
+import com.project.shopapp.exception.ExistDataException;
 import com.project.shopapp.exception.InvalidParamException;
 import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.exception.PermissionDenied;
@@ -34,11 +35,11 @@ public class UserService implements IUserService {
     private final JwtTokenUtil jwtTokenUtil;
     private final AuthenticationManager authenticationManager;
     @Override
-    public User createUser(UserDTO userDTO) throws NotFoundException, PermissionDenied {
+    public User createUser(UserDTO userDTO) throws NotFoundException, PermissionDenied, ExistDataException {
         // Register user
         String phoneNumber = userDTO.getPhoneNumber();
         if(userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new DataIntegrityViolationException("Phone number alreadt exists!");
+            throw new ExistDataException("Phone number alreadt exists!");
         };
         Role role = roleRepository.findById(userDTO.getRoleId())
                 .orElseThrow(() -> new NotFoundException("Role not found"));
