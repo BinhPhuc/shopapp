@@ -34,7 +34,11 @@ public class WebSecurityConfig {
                     request
                             .requestMatchers(
                                     "/api/v1/users/register",
-                                    "/api/v1/users/login")
+                                    "/api/v1/users/login",
+                                    "api/v1/roles",
+                                    "api/v1/products/**",
+                                    "api/v1/products/images/*"
+                            )
                             .permitAll()
                             .requestMatchers(
                                     HttpMethod.GET, "api/v1/categories?**").hasAnyRole(Role.USER, Role.ADMIN)
