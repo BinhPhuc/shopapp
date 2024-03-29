@@ -12,11 +12,15 @@ import com.project.shopapp.services.IProductService;
 import com.project.shopapp.models.Product;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,7 +45,7 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam("limit") int limit
     ) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").descending());
         Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
@@ -87,6 +91,24 @@ public class ProductController {
         return ResponseEntity.ok(productImages);
     }
 
+    @GetMapping("/images/{imageName}")
+    public ResponseEntity<?> viewImage (@PathVariable("imageName") String imageName) {
+        try {
+            String fileName = "uploads/" + imageName;
+            java.nio.file.Path imagePath = Paths.get(fileName);
+            Resource resource = new FileSystemResource(imagePath);
+            if(resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
     public String uniqueFileName(MultipartFile file) throws NotFoundException, IOException {
         if(!isImageFile(file) || file.getOriginalFilename() == null) {
@@ -118,12 +140,14 @@ public class ProductController {
         return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
     }
     @DeleteMapping("/{product_id}")
+    @Transactional
     public ResponseEntity<String> deleteProductById(@PathVariable("product_id") Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok(String.format("Product with id = %d delete successfully!", productId));
     }
 
     @PutMapping("/{product_id}")
+    @Transactional
     public ResponseEntity<?> updateProductById(@PathVariable("product_id") Long productId,
                                                    @Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
         productService.updateProduct(productId, productDTO);

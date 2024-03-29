@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,12 +38,14 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<String> updateCategory(@PathVariable("id") Long id,
                                                  @RequestBody CategoryDTO categoryDTO) throws NotFoundException {
         categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok("Update category with id = " + id + " successfully!");
     }
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<String> deleteCategory(@PathVariable("id") Long id) throws NotFoundException {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok("delete category with id = " + id + " successfully!");

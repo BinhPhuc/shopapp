@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,7 @@ public class OrderController {
         return ResponseEntity.ok(orderList);
     }
     @PutMapping("/{order_id}")
+    @Transactional
     public ResponseEntity<?> updateOrder (@Valid @PathVariable("order_id") Long orderId,
                                           @Valid @RequestBody OrderDTO orderDTO ) throws NotFoundException {
         Order newOrder = orderService.updateOrder(orderId, orderDTO);
@@ -50,6 +52,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{order_id}")
+    @Transactional
     public ResponseEntity<?> deleteOrder (@Valid @PathVariable("order_id") Long orderId)
             throws NotFoundException {
         // active -> 0

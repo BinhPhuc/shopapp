@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,12 +47,14 @@ public class OrderDetailController {
     }
 
     @PutMapping("/{order_detail_id}")
+    @Transactional
     public ResponseEntity<?> updateOrderDetail (@Valid @PathVariable("order_detail_id") Long orderDetailId,
                                                 @Valid @RequestBody OrderDetailDTO orderDetailDTO) throws NotFoundException {
         OrderDetail newOrderDetail = orderDetailService.updateOrderDetail(orderDetailId, orderDetailDTO);
         return ResponseEntity.ok(OrderDetailResponse.fromOrderDetail(newOrderDetail));
     }
     @DeleteMapping("/{order_detail_id}")
+    @Transactional
     public ResponseEntity<?> deleteOrderDetail (@Valid @PathVariable("order_detail_id") Long orderDetailId) {
         orderDetailService.deleteOrderDetailById(orderDetailId);
         return ResponseEntity.status(HttpStatus.OK).body("delete order detail with id = " + orderDetailId);
