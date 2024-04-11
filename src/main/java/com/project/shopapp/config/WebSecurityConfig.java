@@ -37,7 +37,8 @@ public class WebSecurityConfig {
                                     "/api/v1/users/login",
                                     "api/v1/roles",
                                     "api/v1/products/**",
-                                    "api/v1/products/images/*"
+                                    "api/v1/products/images/*",
+                                    "api/v1/products?**"
                             )
                             .permitAll()
                             .requestMatchers(

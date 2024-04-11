@@ -42,11 +42,16 @@ public class ProductController {
     private final IProductService productService;
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
-            @RequestParam("page") int page,
-            @RequestParam("limit") int limit
+            @RequestParam(defaultValue = "", name = "keyword") String keyword,
+            @RequestParam(defaultValue = "", name = "categoryId") Long categoryId,
+            @RequestParam(defaultValue = "0", name = "page") int page,
+            @RequestParam(defaultValue = "10", name = "limit") int limit
     ) {
-        PageRequest pageRequest = PageRequest.of(page, limit, Sort.by("id").descending());
-        Page<ProductResponse> productPage = productService.getAllProducts(pageRequest);
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                limit,
+                Sort.by("id"));
+        Page<ProductResponse> productPage = productService.getAllProducts(keyword, categoryId, pageRequest);
         int totalPages = productPage.getTotalPages();
         List<ProductResponse> products = productPage.getContent();
         return ResponseEntity.ok(ProductListResponse

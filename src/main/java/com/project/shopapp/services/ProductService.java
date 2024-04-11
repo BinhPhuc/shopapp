@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -49,11 +50,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(PageRequest pageRequest) {
-        // lay danh sach san pham theo trang(page) va gioi han(limit)
-        // trang 1: 1 -> 10
-        // trang 2: 11 -> 20
-        return productRepository.findAll(pageRequest).map(ProductResponse::fromProduct);
+    public Page<ProductResponse> getAllProducts(String keyword, Long categoryId, PageRequest pageRequest) {
+        Page<Product> productsPage = productRepository.searchProduct(keyword, categoryId, pageRequest);
+        return productsPage.map(ProductResponse::fromProduct);
     }
 
     @Override

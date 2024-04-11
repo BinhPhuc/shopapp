@@ -9,11 +9,12 @@ import com.project.shopapp.models.ProductImage;
 import com.project.shopapp.responses.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 public interface IProductService {
     Product createProduct(ProductDTO productDTO) throws NotFoundException;
     Product getProductById(Long id) throws NotFoundException;
-    Page<ProductResponse> getAllProducts (PageRequest pageRequest);
+    Page<ProductResponse> getAllProducts (String keyword, Long categoryId, PageRequest pageable);
     Product updateProduct(Long id, ProductDTO productDTO) throws NotFoundException;
     void deleteProduct(Long id);
     boolean existsByName(String name);
