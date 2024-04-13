@@ -38,11 +38,10 @@ public class WebSecurityConfig {
                                     "api/v1/roles",
                                     "api/v1/products/**",
                                     "api/v1/products/images/*",
-                                    "api/v1/products?**"
+                                    "api/v1/products?**",
+                                    "api/v1/categories"
                             )
                             .permitAll()
-                            .requestMatchers(
-                                    HttpMethod.GET, "api/v1/categories?**").hasAnyRole(Role.USER, Role.ADMIN)
                             .requestMatchers(
                                     HttpMethod.POST, "api/v1/categories/**").hasRole(Role.ADMIN)
                             .requestMatchers(

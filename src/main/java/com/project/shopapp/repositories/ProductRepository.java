@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsByName (String name);
     @Query("SELECT p FROM Product p " +
-            "WHERE (:keyword IS NULL OR p.name LIKE %:keyword%) " +
-            "AND (:categoryId IS NULL OR p.category.id = :categoryId)")
+            "WHERE (:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword%) " +
+            "AND (:categoryId IS NULL OR :categoryId = 0 OR p.category.id = :categoryId)")
     Page<Product> searchProduct(String keyword, Long categoryId, PageRequest pageRequest);
 }

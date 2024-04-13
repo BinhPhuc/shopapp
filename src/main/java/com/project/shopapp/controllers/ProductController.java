@@ -43,7 +43,7 @@ public class ProductController {
     @GetMapping("")
     public ResponseEntity<ProductListResponse> getProducts(
             @RequestParam(defaultValue = "", name = "keyword") String keyword,
-            @RequestParam(defaultValue = "", name = "categoryId") Long categoryId,
+            @RequestParam(defaultValue = "0", name = "categoryId") Long categoryId,
             @RequestParam(defaultValue = "0", name = "page") int page,
             @RequestParam(defaultValue = "10", name = "limit") int limit
     ) {
@@ -107,7 +107,11 @@ public class ProductController {
                         .contentType(MediaType.IMAGE_JPEG)
                         .body(resource);
             } else {
-                return ResponseEntity.notFound().build();
+                String errorImageName = "uploads/404_not_found.png";
+                java.nio.file.Path image_404_path = Paths.get(errorImageName);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new FileSystemResource(image_404_path));
             }
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
