@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -96,5 +97,17 @@ public class ProductService implements IProductService {
             throw new InvalidParamException("You can only upload maximum 5 images!");
         }
         return productImageRepository.save(newProductImage);
+    }
+
+    @Override
+    public List<ProductImage> getAllImageOfProduct(Long productId) {
+        List<ProductImage> productImageList = productImageRepository.findByProductId(productId);
+        return productImageList;
+    }
+
+    @Override
+    public List<Product> getAllProductByIds(List<Long> ids) {
+        List<Product> products = productRepository.findAllById(ids);
+        return products;
     }
 }

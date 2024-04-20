@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface IProductService {
     Product createProduct(ProductDTO productDTO) throws NotFoundException;
     Product getProductById(Long id) throws NotFoundException;
@@ -20,4 +22,8 @@ public interface IProductService {
     boolean existsByName(String name);
 
     ProductImage createProductImage(Long id, ProductImageDTO productImageDTO) throws NotFoundException, InvalidParamException;
+
+    List<ProductImage> getAllImageOfProduct(Long productId);
+
+    List<Product> getAllProductByIds(List<Long> ids);
 }

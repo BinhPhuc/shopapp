@@ -2,8 +2,12 @@ package com.project.shopapp.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.models.Product;
+import com.project.shopapp.models.ProductImage;
 import lombok.*;
 import org.modelmapper.ModelMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter

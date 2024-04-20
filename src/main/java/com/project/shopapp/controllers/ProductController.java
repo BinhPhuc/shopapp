@@ -143,11 +143,24 @@ public class ProductController {
         return true;
     }
 
+    @GetMapping("/view/images/{product_id}")
+    public ResponseEntity<?> getProductImagesByProductId(@PathVariable("product_id") Long productId) {
+        List<ProductImage> productImagesList = productService.getAllImageOfProduct(productId);
+        return ResponseEntity.ok(productImagesList);
+    }
+
     @GetMapping("/{product_id}")
     public ResponseEntity<?> getProductById(@PathVariable("product_id") Long productId) throws NotFoundException {
         Product existingProduct = productService.getProductById(productId);
         return ResponseEntity.ok(ProductResponse.fromProduct(existingProduct));
     }
+
+    @GetMapping("/by-ids")
+    public ResponseEntity<?> getAllProductsByIds(@RequestParam("ids") List<Long> ids) {
+        List<Product> products = productService.getAllProductByIds(ids);
+        return ResponseEntity.ok(products);
+    }
+
     @DeleteMapping("/{product_id}")
     @Transactional
     public ResponseEntity<String> deleteProductById(@PathVariable("product_id") Long productId) {
@@ -163,7 +176,6 @@ public class ProductController {
         Product productAfterUpdated = productService.getProductById(productId);
         return ResponseEntity.ok(ProductResponse.fromProduct(productAfterUpdated));
     }
-
 
     // fake products
     @PostMapping("/generateFakeProducts")

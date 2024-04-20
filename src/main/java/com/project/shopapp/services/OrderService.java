@@ -1,19 +1,21 @@
 package com.project.shopapp.services;
 
+import com.project.shopapp.dtos.CartItemDTO;
 import com.project.shopapp.dtos.OrderDTO;
 import com.project.shopapp.exception.DateAndTimeException;
 import com.project.shopapp.exception.NotFoundException;
-import com.project.shopapp.models.Order;
-import com.project.shopapp.models.OrderStatus;
-import com.project.shopapp.models.User;
+import com.project.shopapp.models.*;
+import com.project.shopapp.repositories.OrderDetailRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +25,8 @@ import java.util.List;
 public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final OrderDetailRepository orderDetailRepository;
+    private final ProductService productService;
     @Override
     public Order createOrder(OrderDTO orderDTO)
             throws NotFoundException, DateAndTimeException {
@@ -49,7 +53,21 @@ public class OrderService implements IOrderService {
             throw new DateAndTimeException("Date must be at least today!");
         }
         newOrder.setShippingDate(shippingDate);
-        return orderRepository.save(newOrder);
+        orderRepository.save(newOrder);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        for(CartItemDTO cartItemDTO : orderDTO.getCartItems()) {
+            Long productId = cartItemDTO.getProductId();
+            Product currentProduct = productService.getProductById(productId);
+            OrderDetail orderDetail = OrderDetail.builder()
+                    .order(newOrder)
+                    .product(currentProduct)
+                    .quantity(cartItemDTO.getQuantity())
+                    .price(currentProduct.getPrice())
+                    .build();
+            orderDetails.add(orderDetail);
+        }
+        orderDetailRepository.saveAll(orderDetails);
+        return newOrder;
     }
 
     @Override
