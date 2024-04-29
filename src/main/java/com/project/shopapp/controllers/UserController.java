@@ -1,10 +1,12 @@
 package com.project.shopapp.controllers;
 
+import com.project.shopapp.components.JwtTokenUtils;
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.exception.*;
 import com.project.shopapp.models.User;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.responses.LoginResponse;
+import com.project.shopapp.responses.UserResponse;
 import com.project.shopapp.services.IUserService;
 import com.project.shopapp.components.LocalizationUtils;
 import com.project.shopapp.utils.MessageUtils;
@@ -16,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/users")
@@ -58,5 +62,18 @@ public class UserController {
             throws NotFoundException {
         User user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/details")
+    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String token) throws ExpiredException,
+            NotFoundException {
+        String newToken = token.substring(7);
+        User user = userService.getUserDetailsByToken(newToken);
+        return ResponseEntity.ok(UserResponse.builder()
+                        .userId(user.getId())
+                        .fullName(user.getFullName())
+                        .phoneNumber(user.getPhoneNumber())
+                        .address(user.getAddress())
+                .build());
     }
 }

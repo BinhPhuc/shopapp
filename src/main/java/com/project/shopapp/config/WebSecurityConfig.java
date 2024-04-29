@@ -40,7 +40,8 @@ public class WebSecurityConfig {
                                     "api/v1/products/images/*",
                                     "api/v1/products?**",
                                     "api/v1/categories",
-                                    "api/v1/products/view/images/*"
+                                    "api/v1/products/view/images/*",
+                                    "api/v1/categories/**"
                             )
                             .permitAll()
                             .requestMatchers(
@@ -52,8 +53,7 @@ public class WebSecurityConfig {
                             .requestMatchers(
                                     HttpMethod.POST, "api/v1/orders/**").hasRole(Role.USER)
                             .requestMatchers(
-                                    HttpMethod.GET, "api/v1/orders/**").hasAnyRole(Role.USER,
-                                    Role.ADMIN)
+                                    HttpMethod.GET, "api/v1/orders/**").permitAll()
                             .requestMatchers(
                                     HttpMethod.PUT, "api/v1/orders/**").hasRole(Role.ADMIN)
                             .requestMatchers(
@@ -61,8 +61,7 @@ public class WebSecurityConfig {
                             .requestMatchers(
                                     HttpMethod.POST, "api/v1/order_details/**").hasRole(Role.USER)
                             .requestMatchers(
-                                    HttpMethod.GET, "api/v1/order_details/**").hasAnyRole(Role.USER,
-                                    Role.ADMIN)
+                                    HttpMethod.GET, "api/v1/order_details/**").permitAll()
                             .requestMatchers(
                                     HttpMethod.PUT, "api/v1/order_details/**").hasRole(Role.ADMIN)
                             .requestMatchers(

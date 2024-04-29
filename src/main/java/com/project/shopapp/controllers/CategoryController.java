@@ -35,6 +35,12 @@ public class CategoryController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCategoryById(@PathVariable("id") Long id) throws NotFoundException {
+        Category category = categoryService.getCategoryById(id);
+        return ResponseEntity.ok(category);
+    }
+
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<String> updateCategory(@PathVariable("id") Long id,

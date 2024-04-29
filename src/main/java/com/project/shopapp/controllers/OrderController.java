@@ -4,8 +4,11 @@ import com.project.shopapp.dtos.OrderDTO;
 import com.project.shopapp.exception.DateAndTimeException;
 import com.project.shopapp.exception.NotFoundException;
 import com.project.shopapp.models.Order;
+import com.project.shopapp.models.OrderDetail;
+import com.project.shopapp.responses.OrderDetailResponse;
 import com.project.shopapp.responses.OrderListResponse;
 import com.project.shopapp.responses.OrderResponse;
+import com.project.shopapp.services.IOrderDetailService;
 import com.project.shopapp.services.IOrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.List;
 
 public class OrderController {
     private final IOrderService orderService;
+    private final IOrderDetailService orderDetailService;
     @PostMapping("")
     public ResponseEntity<?> createOrder (@Valid @RequestBody OrderDTO orderDTO)
             throws NotFoundException, DateAndTimeException {
@@ -34,7 +38,25 @@ public class OrderController {
     public ResponseEntity<?> getOrder (@Valid @PathVariable("order_id") Long orderId)
             throws NotFoundException {
         Order order = orderService.getOrderById(orderId);
-        return ResponseEntity.ok(order);
+        List<OrderDetail> orderDetails = orderDetailService.getAllOrders(orderId);
+        List<OrderDetailResponse> orderDetailResponses = orderDetails
+                .stream()
+                .map(orderDetail -> OrderDetailResponse.fromOrderDetail(orderDetail)).toList();
+        return ResponseEntity.ok(OrderResponse.builder()
+                        .id(order.getId())
+                        .userId(order.getUser().getId())
+                        .fullName(order.getFullName())
+                        .email(order.getEmail())
+                        .phoneNumber(order.getPhoneNumber())
+                        .address(order.getAddress())
+                        .note(order.getNote())
+                        .orderDate(order.getOrderDate())
+                        .totalMoney(order.getTotalMoney())
+                        .shippingMethod(order.getShippingMethod())
+                        .shippingAddress(order.getShippingAddress())
+                        .paymentMethod(order.getPaymentMethod())
+                        .orderDetails(orderDetailResponses)
+                        .build());
     }
 
     @GetMapping("/user/{user_id}")

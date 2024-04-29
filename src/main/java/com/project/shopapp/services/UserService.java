@@ -4,16 +4,14 @@ import com.project.shopapp.components.JwtTokenUtils;
 import com.project.shopapp.components.LocalizationUtils;
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
-import com.project.shopapp.exception.ExistDataException;
-import com.project.shopapp.exception.InvalidParamException;
-import com.project.shopapp.exception.NotFoundException;
-import com.project.shopapp.exception.PermissionDenied;
+import com.project.shopapp.exception.*;
 import com.project.shopapp.models.Role;
 import com.project.shopapp.models.User;
 import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.NotFound;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -100,5 +98,19 @@ public class UserService implements IUserService {
     public User getUserById(Long userId) throws NotFoundException {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(MessageUtils.USER_NOT_FOUND));
+    }
+
+    @Override
+    public User getUserDetailsByToken(String token) throws ExpiredException, NotFoundException {
+        if(jwtTokenUtils.isTokenExpired(token)) {
+            throw new ExpiredException("token is expired!");
+        }
+        String phoneNumber = jwtTokenUtils.extractPhoneNumber(token);
+        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
+        if(user.isEmpty()) {
+            throw new NotFoundException("user not found!");
+        } else {
+            return user.get();
+        }
     }
 }

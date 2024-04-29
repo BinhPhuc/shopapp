@@ -2,14 +2,11 @@ package com.project.shopapp.services;
 
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
-import com.project.shopapp.exception.ExistDataException;
-import com.project.shopapp.exception.InvalidParamException;
-import com.project.shopapp.exception.NotFoundException;
-import com.project.shopapp.exception.PermissionDenied;
+import com.project.shopapp.exception.*;
 import com.project.shopapp.models.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface IUserService {
     User createUser(UserDTO userDTO) throws NotFoundException, PermissionDenied, ExistDataException;
@@ -20,4 +17,6 @@ public interface IUserService {
             InvalidParamException;
 
     User getUserById(Long userId) throws NotFoundException;
+
+    User getUserDetailsByToken(String token) throws ExpiredException, NotFoundException;
 }
