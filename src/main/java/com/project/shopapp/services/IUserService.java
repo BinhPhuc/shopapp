@@ -19,4 +19,6 @@ public interface IUserService {
     User getUserById(Long userId) throws NotFoundException;
 
     User getUserDetailsByToken(String token) throws ExpiredException, NotFoundException;
+
+    User updateUser(Long userId, UserDTO updateUserDTO) throws NotFoundException, PermissionDenied, PasswordMachingException;
 }

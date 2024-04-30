@@ -18,7 +18,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
@@ -113,4 +116,45 @@ public class UserService implements IUserService {
             return user.get();
         }
     }
+
+    @Override
+    @Transactional
+    public User updateUser(Long userId, UserDTO updateUserDTO) throws NotFoundException, PermissionDenied,
+            PasswordMachingException {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User existingUser = optionalUser.get();
+        if(optionalUser.isEmpty()) {
+            throw new NotFoundException("Cannot find user with id = " + userId);
+        }
+        String newPhoneNumber = updateUserDTO.getPhoneNumber();
+        if(userRepository.existsByPhoneNumber(newPhoneNumber)) {
+            throw new PermissionDenied("Phone number already exists");
+        }
+        if(updateUserDTO.getFullName() != null) {
+            existingUser.setFullName(updateUserDTO.getFullName());
+        }
+        if(updateUserDTO.getPhoneNumber() != null) {
+            existingUser.setPhoneNumber(updateUserDTO.getPhoneNumber());
+        }
+        if(updateUserDTO.getAddress() != null) {
+            existingUser.setAddress(updateUserDTO.getAddress());
+        }
+        if(updateUserDTO.getPassword() != null &&
+                updateUserDTO.getRetypePassword() != null) {
+            if(updateUserDTO.getPassword().equals(updateUserDTO.getRetypePassword())) {
+                throw new PasswordMachingException("Password and retype password are not matching");
+            }
+            String password = updateUserDTO.getPassword();
+            String encodedPassword = passwordEncoder.encode(password);
+            existingUser.setPassword(encodedPassword);
+        }
+        if(updateUserDTO.getGoogleAccountId() != null && updateUserDTO.getGoogleAccountId() > 0) {
+            existingUser.setGoogleAccountId(updateUserDTO.getGoogleAccountId());
+        }
+        if(updateUserDTO.getFacebookAccountId() != null && updateUserDTO.getFacebookAccountId() > 0) {
+            existingUser.setFacebookAccountId(updateUserDTO.getFacebookAccountId());
+        }
+        return userRepository.save(existingUser);
+    }
+
 }

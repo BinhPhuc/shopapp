@@ -13,6 +13,7 @@ import com.project.shopapp.utils.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -65,15 +66,36 @@ public class UserController {
     }
 
     @PostMapping("/details")
-    public ResponseEntity<?> getUserDetails(@RequestHeader("Authorization") String token) throws ExpiredException,
+    public ResponseEntity<?> getUserDetails(
+            @RequestHeader("Authorization") String authorizationHeader) throws ExpiredException,
             NotFoundException {
-        String newToken = token.substring(7);
+        String newToken = authorizationHeader.substring(7);
         User user = userService.getUserDetailsByToken(newToken);
         return ResponseEntity.ok(UserResponse.builder()
                         .userId(user.getId())
                         .fullName(user.getFullName())
                         .phoneNumber(user.getPhoneNumber())
                         .address(user.getAddress())
+                .build());
+    }
+
+    @PutMapping("/details/{userId}")
+    public ResponseEntity<?> updateUserDetail(
+            @RequestHeader("Authorization") @NotNull String authorizationHeader,
+            @PathVariable("userId") Long userId,
+            @RequestBody UserDTO updatedUserDTO) throws ExpiredException, NotFoundException, PermissionDenied,
+            PasswordMachingException {
+        String newToken = authorizationHeader.substring(7);
+        User user = userService.getUserDetailsByToken(newToken);
+        if(userId != user.getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("cannot update other user profile");
+        }
+        User updatedUser = userService.updateUser(userId, updatedUserDTO);
+        return ResponseEntity.ok(UserResponse.builder()
+                .userId(updatedUser.getId())
+                .fullName(updatedUser.getFullName())
+                .phoneNumber(updatedUser.getPhoneNumber())
+                .address(updatedUser.getAddress())
                 .build());
     }
 }
