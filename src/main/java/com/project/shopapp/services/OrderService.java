@@ -8,9 +8,13 @@ import com.project.shopapp.models.*;
 import com.project.shopapp.repositories.OrderDetailRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.UserRepository;
+import com.project.shopapp.responses.OrderListResponse;
+import com.project.shopapp.responses.OrderResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.cglib.core.Local;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,9 +27,13 @@ import java.util.List;
 @RequiredArgsConstructor
 
 public class OrderService implements IOrderService {
+    @Autowired
     private final OrderRepository orderRepository;
+    @Autowired
     private final UserRepository userRepository;
+    @Autowired
     private final OrderDetailRepository orderDetailRepository;
+    @Autowired
     private final ProductService productService;
     @Override
     public Order createOrder(OrderDTO orderDTO)
@@ -111,5 +119,9 @@ public class OrderService implements IOrderService {
         orderRepository.save(existingOrder);
     }
 
-
+    @Override
+    public Page<OrderResponse> getOrderByKeyword(String keyword, Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findByKeyword(keyword, pageable);
+        return orderPage.map(OrderResponse::fromOrder);
+    }
 }

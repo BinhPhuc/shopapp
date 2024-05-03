@@ -11,9 +11,16 @@ import com.project.shopapp.responses.OrderResponse;
 import com.project.shopapp.services.IOrderDetailService;
 import com.project.shopapp.services.IOrderService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +33,9 @@ import java.util.List;
 @RequiredArgsConstructor
 
 public class OrderController {
+    @Autowired
     private final IOrderService orderService;
+    @Autowired
     private final IOrderDetailService orderDetailService;
     @PostMapping("")
     public ResponseEntity<?> createOrder (@Valid @RequestBody OrderDTO orderDTO)
@@ -80,5 +89,21 @@ public class OrderController {
         // active -> 0
         orderService.deleteOrderById(orderId);
         return ResponseEntity.ok("Delete order with id = " + orderId + " successfully!");
+    }
+
+    @GetMapping("/get-orders-by-keyword")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> getOrdersByKeyword(@RequestParam(defaultValue = "0", name = "page") int page,
+                                                @RequestParam(defaultValue = "11", name = "limit") int limit,
+                                                @RequestParam(name = "keyword") String keyword) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("id").ascending());
+        Page<OrderResponse> orderPage = orderService.getOrderByKeyword(keyword, pageable);
+        List<OrderResponse> orderResponseList = orderPage.getContent();
+        int totalPages = orderPage.getTotalPages();
+        return ResponseEntity.ok(OrderListResponse
+                .builder()
+                        .orderResponseList(orderResponseList)
+                        .totalPages(totalPages)
+                .build());
     }
 }

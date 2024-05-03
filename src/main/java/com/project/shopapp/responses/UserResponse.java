@@ -22,5 +22,6 @@ public class UserResponse {
     @JsonProperty("address")
     private String address;
 
-
+    @JsonProperty("role_id")
+    private Long roleId;
 }

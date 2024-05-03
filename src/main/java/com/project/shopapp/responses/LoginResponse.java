@@ -1,6 +1,7 @@
 package com.project.shopapp.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.shopapp.models.Role;
 import lombok.*;
 
 @Data
@@ -16,4 +17,7 @@ public class LoginResponse {
 
     @JsonProperty("token")
     private String token;
+
+    @JsonProperty("role")
+    private Long roleId;
 }

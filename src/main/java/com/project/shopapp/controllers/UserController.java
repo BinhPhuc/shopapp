@@ -54,6 +54,7 @@ public class UserController {
                 LoginResponse.builder()
                         .message(localizationUtils.getLocalizeMessage(MessageUtils.LOGIN_SUCCESFULLY))
                         .token(token)
+                        .roleId(userLoginDTO.getRoleId())
                         .build()
         );
     }
@@ -76,6 +77,7 @@ public class UserController {
                         .fullName(user.getFullName())
                         .phoneNumber(user.getPhoneNumber())
                         .address(user.getAddress())
+                        .roleId(user.getRole().getId())
                 .build());
     }
 

@@ -13,4 +13,5 @@ import java.util.List;
 
 public class OrderListResponse {
     List<OrderResponse> orderResponseList;
+    int totalPages;
 }
